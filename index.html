@@ -355,50 +355,6 @@
     margin-bottom: 16px;
     line-height: 1.4;
   }
-  .demo-creds {
-    margin-top: 22px;
-    padding-top: 18px;
-    border-top: 1px solid var(--line);
-  }
-  .demo-creds-title {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--slate-soft);
-    margin-bottom: 10px;
-    line-height: 1.5;
-  }
-  .demo-creds-title code {
-    background: var(--fog);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--ink);
-    font-weight: 600;
-  }
-  .demo-creds-list {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    max-height: 220px;
-    overflow-y: auto;
-    padding-right: 4px;
-  }
-  .demo-cred-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 6px 9px;
-    background: none;
-    border: 1.5px solid var(--line);
-    border-radius: 7px;
-    font-size: 12px;
-    color: var(--ink);
-    text-align: left;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: border-color 0.15s ease, background 0.15s ease;
-  }
-  .demo-cred-row:hover { border-color: var(--blue); background: rgba(17,126,192,0.05); }
-  .demo-cred-email { font-family: var(--font-mono); color: var(--slate); }
 
   .form-msg.error { background: rgba(197,58,58,0.08); color: #C53A3A; border: 1px solid rgba(197,58,58,0.2); }
   .form-msg.success { background: rgba(45,176,61,0.08); color: var(--green-dark); border: 1px solid rgba(45,176,61,0.25); }
@@ -1239,7 +1195,7 @@
 <body>
 
 <div id="demoBanner" style="position:fixed;top:0;left:0;right:0;z-index:9999;background:#142136;color:#fff;text-align:center;padding:8px 12px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.03em;">
-  DEMO MODE &mdash; no backend connected, use one of the demo accounts below to sign in
+  DEMO MODE &mdash; no backend connected yet, password changes are saved to this browser only
 </div>
 <div id="app" style="padding-top:34px;"></div>
 
@@ -1285,7 +1241,8 @@ var DEMO_ACCOUNTS = [
   { email: 'nylla@wisehousebugs.com', role: 'technician', firstName: 'Nylla', lastName: '' },
   { email: 'robert@wisehousebugs.com', role: 'technician', firstName: 'Robert', lastName: '' },
   { email: 'steven@wisehousebugs.com', role: 'technician', firstName: 'Steven', lastName: '' },
-  { email: 'zach@wisehousebugs.com', role: 'technician', firstName: 'Zach', lastName: '' }
+  { email: 'zach@wisehousebugs.com', role: 'technician', firstName: 'Zach', lastName: '' },
+  { email: 'Michaelstockhausen@yahoo.com', role: 'technician', firstName: 'Michael', lastName: '' }
 ];
 
 /* Per-account password state, persisted so the "must change password" flow
@@ -1489,27 +1446,9 @@ function renderLogin() {
       '<div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required /></div>' +
       '<button class="btn-primary" type="submit" id="loginBtn">Sign in</button>' +
     '</form>' +
-    '<div class="auth-links"><button id="toForgot">Forgot password?</button><span></span></div>' +
-    '<div class="demo-creds">' +
-      '<div class="demo-creds-title">All staff start with the temporary password <code>' + DEMO_TEMP_PASSWORD + '</code> \u2014 you\'ll be asked to set your own on first sign-in.</div>' +
-      '<div class="demo-creds-list">' +
-        DEMO_ACCOUNTS.map(function (a) {
-          return '<button type="button" class="demo-cred-row" data-email="' + a.email + '">' +
-            '<span class="role-tag role-' + a.role + '">' + (a.role === 'superadmin' ? 'Super Admin' : a.role.charAt(0).toUpperCase() + a.role.slice(1)) + '</span>' +
-            '<span class="demo-cred-email">' + a.email + '</span>' +
-          '</button>';
-        }).join('') +
-      '</div>' +
-    '</div>';
+    '<div class="auth-links"><button id="toForgot">Forgot password?</button><span></span></div>';
 
   document.getElementById('toForgot').onclick = function () { navigate('forgot'); };
-
-  document.querySelectorAll('.demo-cred-row').forEach(function (row) {
-    row.onclick = function () {
-      document.getElementById('loginEmail').value = row.getAttribute('data-email');
-      document.getElementById('loginPassword').value = DEMO_TEMP_PASSWORD;
-    };
-  });
 
   document.getElementById('loginForm').onsubmit = function (e) {
     e.preventDefault();
@@ -2204,7 +2143,7 @@ var TRAINING_MODULES = [
 ];
 
 var TRAINING_PROGRESS = {}; // module title -> steps completed by the current logged-in demo user
-var TRAINING_TECHS = ['Chris', 'Luke', 'Nylla', 'Robert', 'Steven', 'Zach'];
+var TRAINING_TECHS = ['Chris', 'Luke', 'Nylla', 'Robert', 'Steven', 'Zach', 'Michael'];
 
 function hashStr(s) {
   var h = 0;
@@ -2441,7 +2380,8 @@ var RANK_DATA = [
   { name: 'Nylla', jobs: 52, sales: 13600, salesCount: 25 },
   { name: 'Robert', jobs: 49, sales: 12120, salesCount: 22 },
   { name: 'Steven', jobs: 47, sales: 10890, salesCount: 20 },
-  { name: 'Zach', jobs: 44, sales: 9510, salesCount: 18 }
+  { name: 'Zach', jobs: 44, sales: 9510, salesCount: 18 },
+  { name: 'Michael', jobs: 6, sales: 1240, salesCount: 3 }
 ];
 RANK_DATA.sort(function (a, b) { return b.sales - a.sales; });
 
