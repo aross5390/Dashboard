@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GorillaDesk Training — Wise House Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#2DB03D; --green-dark:#249A31; --blue:#117EC0; --ink:#163350;
+    --slate:#4C6070; --slate-soft:#7C8FA0; --fog:#F4F7F9; --paper:#FFFFFF;
+    --line:#E3E9EE; --amber:#C77D18; --red:#C0392B;
+    --font-display:'Poppins',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'IBM Plex Mono',monospace;
+    --shadow-card:0 1px 2px rgba(22,51,80,.06), 0 4px 16px rgba(22,51,80,.06);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--fog); color:var(--ink); font-family:var(--font-body);
+    padding:32px 16px 80px;
+  }
+  .wrap{max-width:880px; margin:0 auto;}
+  header.hero{
+    background:linear-gradient(135deg,var(--ink),#0e2338); color:#fff; border-radius:16px;
+    padding:32px 28px; margin-bottom:28px; box-shadow:var(--shadow-card);
+  }
+  header.hero .tag{font-family:var(--font-mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:#9FD6A8; margin-bottom:8px;}
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:12px;
+    color:#C7D3DE; text-decoration:none; margin-bottom:16px; opacity:.85;
+  }
+  .back-link:hover{opacity:1; color:#fff;}
+  header.hero h1{font-family:var(--font-display); font-size:28px; margin:0 0 8px;}
+  header.hero p{margin:0; color:#C7D3DE; font-size:14.5px; line-height:1.55; max-width:640px;}
+  .meta-row{display:flex; gap:16px; margin-top:20px; flex-wrap:wrap;}
+  .meta-field{flex:1; min-width:200px;}
+  .meta-field label{display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:#9FB0BF; margin-bottom:6px;}
+  .meta-field input{
+    width:100%; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2); border-radius:8px;
+    color:#fff; padding:10px 12px; font-family:var(--font-body); font-size:14px;
+  }
+  .meta-field input::placeholder{color:#7C8FA0;}
+
+  .progress-bar{position:sticky; top:0; z-index:5; background:var(--fog); padding:10px 0 16px;}
+  .progress-track{height:8px; border-radius:99px; background:var(--line); overflow:hidden;}
+  .progress-fill{height:100%; background:var(--green); width:0%; transition:width .3s ease;}
+  .progress-label{font-family:var(--font-mono); font-size:12px; color:var(--slate); margin-top:6px; text-align:right;}
+
+  .module{margin-bottom:36px;}
+  .module-head{display:flex; align-items:baseline; gap:10px; margin:0 0 14px;}
+  .module-head .num{
+    font-family:var(--font-display); font-weight:800; font-size:13px; color:#fff;
+    background:var(--blue); border-radius:6px; padding:4px 9px;
+  }
+  .module-head h2{font-family:var(--font-display); font-size:19px; margin:0; color:var(--ink);}
+  .module-desc{margin:0 0 16px; color:var(--slate); font-size:13.5px; max-width:640px;}
+
+  .lesson-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    margin-bottom:16px; box-shadow:var(--shadow-card);
+  }
+  .lesson-head{padding:16px 20px 4px;}
+  .lesson-num{font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--blue);}
+  .lesson-title{font-family:var(--font-display); font-size:16px; margin:4px 0 6px; color:var(--ink);}
+  .lesson-summary{font-size:13.5px; color:var(--slate); line-height:1.55; margin:0 0 14px;}
+
+  .video-wrap{padding:0 20px;}
+  .video-frame{position:relative; padding:56.25% 0 0 0; border-radius:10px; overflow:hidden; background:#0e2338;}
+  .video-frame iframe{position:absolute; top:0; left:0; width:100%; height:100%; border:0;}
+  .video-fallback{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    color:#C7D3DE; font-size:12.5px; font-family:var(--font-mono); text-align:center; padding:16px;
+  }
+  .video-fallback a{color:#9FD6A8;}
+
+  .quiz-block{padding:18px 20px 20px;}
+  .quiz-q{font-size:14px; font-weight:600; color:var(--ink); margin:0 0 10px;}
+  .opt{
+    display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border:1px solid var(--line);
+    border-radius:9px; margin-bottom:8px; cursor:pointer; font-size:13.5px; color:var(--slate);
+    transition:border-color .15s, background .15s;
+  }
+  .opt:hover{border-color:var(--blue);}
+  .opt input{margin-top:2px;}
+  .opt.correct{border-color:var(--green); background:#EAF7EC; color:var(--green-dark); font-weight:600;}
+  .opt.incorrect{border-color:var(--red); background:#FBEAE8; color:var(--red); font-weight:600;}
+  .feedback{font-size:12.5px; margin-top:2px; font-family:var(--font-mono);}
+  .feedback.ok{color:var(--green-dark);}
+  .feedback.no{color:var(--red);}
+
+  .lesson-body{position:relative;}
+  .lesson-card.locked .opt{pointer-events:none; opacity:.55;}
+  .lesson-card.locked .video-frame{filter:blur(2px); pointer-events:none;}
+  .lock-overlay{
+    display:none;
+    position:absolute; inset:0; z-index:4;
+    background:rgba(244,247,249,.88);
+    border-radius:10px;
+    flex-direction:column; align-items:center; justify-content:center;
+    gap:8px; padding:20px; text-align:center;
+  }
+  .lesson-card.locked .lock-overlay{display:flex;}
+  .lock-overlay .lock-icon{
+    width:34px; height:34px; border-radius:50%; background:var(--paper); border:1.5px solid var(--line);
+    display:flex; align-items:center; justify-content:center; font-size:15px; color:var(--slate-soft);
+    box-shadow:var(--shadow-card);
+  }
+  .lock-overlay p{margin:0; font-family:var(--font-mono); font-size:12px; color:var(--slate); max-width:280px; line-height:1.5;}
+  .lesson-card.watched .lesson-num::after{content:" \2713 watched"; color:var(--green-dark);}
+
+  .submit-bar{
+    position:sticky; bottom:0; background:var(--paper); border-top:1px solid var(--line);
+    box-shadow:0 -4px 16px rgba(22,51,80,.08); padding:16px; border-radius:14px 14px 0 0;
+    margin-top:24px; text-align:center;
+  }
+  .btn{
+    background:var(--green); color:#fff; border:none; border-radius:9px; padding:13px 26px;
+    font-family:var(--font-body); font-weight:700; font-size:14.5px; cursor:pointer;
+  }
+  .btn:hover{background:var(--green-dark);}
+  .btn:disabled{background:var(--slate-soft); cursor:not-allowed;}
+  .score-note{font-family:var(--font-mono); font-size:12px; color:var(--slate); margin-top:8px;}
+
+  #resultPanel{display:none; text-align:center; padding:26px;}
+  #resultPanel .big{font-family:var(--font-display); font-size:36px; color:var(--ink); margin:0 0 6px;}
+  #resultPanel p{color:var(--slate); font-size:14px; margin:0;}
+
+  cursor: default;
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <a class="back-link" href="index_demo.html">&larr; Back to Dashboard</a>
+    <div class="tag">Wise House Pest Control · Onboarding</div>
+    <h1>GorillaDesk Training &amp; Knowledge Check</h1>
+    <p>Watch each short walkthrough, then answer the question below it. This covers everything from basic account setup through the mobile app workflow you'll use out in the field. Your score is shown once you submit at the bottom.</p>
+    <div class="meta-row">
+      <div class="meta-field">
+        <label>Technician Name</label>
+        <input type="text" id="techName" placeholder="Full name">
+      </div>
+      <div class="meta-field">
+        <label>Email Address</label>
+        <input type="email" id="techEmail" placeholder="name@wisehousebugs.com">
+      </div>
+    </div>
+  </header>
+
+  <div class="progress-bar">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel">0 of 26 answered</div>
+  </div>
+
+  <div id="modulesRoot"></div>
+
+  <div class="submit-bar">
+    <button class="btn" id="submitBtn" disabled>Submit Knowledge Check</button>
+    <div class="score-note" id="submitNote">Answer all 26 questions to submit.</div>
+    <div id="resultPanel">
+      <p class="big" id="scoreBig">0 / 26</p>
+      <p id="scoreSub">Score summary</p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://fast.wistia.com/assets/external/E-v1.js" async></script>
+<script>
+window._wq = window._wq || [];
+const DATA = [
+  { module:"1. Basic Training", desc:"Core fundamentals — setting up your account through completing jobs on desktop and mobile.", lessons:[
+    { title:"Lesson 1 – Understanding Settings", wistia:"fxql6ro38s",
+      summary:"After signing up, the first step is customizing your settings — Company Settings, Users, and account best practices.",
+      q:"Where do you enter your company's email, phone, address, timezone, date format, and currency?",
+      options:["The Users tab","The Company Settings tab","The Materials page","The Customer Portal settings"], correct:1 },
+    { title:"Lesson 2 – Adding a Customer", wistia:"hhp7v0alph",
+      summary:"How to add customers on desktop — tags, contacts, locations, and SMS messaging — plus free import of existing customer lists.",
+      q:"If you already have a customer list from another system, what does GorillaDesk do?",
+      options:["It can't import existing lists","It imports your list for a $99 fee","It imports your existing customer list at no charge","You must re-enter every customer by hand"], correct:2 },
+    { title:"Lesson 3 – Customer Communications", wistia:"hs3vqkypbb",
+      summary:"How to communicate efficiently with customers so nothing falls through the cracks.",
+      q:"This lesson is primarily about:",
+      options:["Setting up QuickBooks Sync","Efficient methods for customer communication","Routing technician stops","Commission tracking"], correct:1 },
+    { title:"Lesson 4 – Email Templates", wistia:"4o76niw9bm",
+      summary:"Customizing email templates for invoices, work orders, estimates, statements, and more.",
+      q:"Email templates in GorillaDesk can be customized for all of the following EXCEPT:",
+      options:["Invoices","Work orders","Estimates","GPS device firmware"], correct:3 },
+    { title:"Lesson 5 – Jobs & Invoices (Desktop)", wistia:"y9byq5pepn",
+      summary:"Creating a job and invoicing a customer from the desktop, plus the difference between Top Notes and Job Notes.",
+      q:"What's the difference between a Top Note and a Job Note?",
+      options:["Top Notes are visible to the client, Job Notes are not","A Top Note appears on all of a customer's jobs; a Job Note appears only on one specific job","There is no difference","Job Notes are only for invoices"], correct:1 },
+    { title:"Lesson 6 – Jobs & Invoices (Mobile)", wistia:"i3bedfsm0w",
+      summary:"Adding a customer, creating a job, servicing, invoicing, and taking payment — all from the mobile app.",
+      q:"Can an admin create a job on another user's schedule from the mobile app?",
+      options:["No, only from desktop","Yes, admins can create jobs on other users' schedules","Only on Fridays","Only if GPS tracking is enabled"], correct:1 },
+    { title:"Lesson 7 – Estimates", wistia:"zzoldljm1c",
+      summary:"Three ways to create an estimate: on a service template, on an existing job, or as a stand-alone estimate.",
+      q:"Before you can create an estimate for someone, what must be true?",
+      options:["Nothing, estimates work for anyone","They must already be added into GorillaDesk as a customer/lead","They must have a paid invoice on file","They must download the mobile app"], correct:1 },
+  ]},
+  { module:"2. Advanced Training", desc:"Scenarios you'll run into after using GorillaDesk for a while — commercial accounts, prepaid billing, and custom frequencies.", lessons:[
+    { title:"Lesson 1 – Multiple Locations", wistia:"xrxy44wyvk",
+      summary:"Setting up commercial customers or property managers with multiple locations, billing email/CC, and statements.",
+      q:"Before you can select a contact's email in the 'Billing email CC' drop-down, you must first:",
+      options:["Enable GPS tracking","Add a contact with their email address","Create a QuickBooks sync","Delete the primary location"], correct:1 },
+    { title:"Lesson 2 – Prepaid Customers", wistia:"jnn4esml1q",
+      summary:"Two ways to handle customers who pay in advance: recurring invoices, or applying payment as account credit.",
+      q:"If a customer has credit on their account, where will they see it?",
+      options:["Nowhere, it's internal only","On their invoice and their receipt","Only in a text message","Only if they call support"], correct:1 },
+    { title:"Lesson 3 – Billing Frequencies", wistia:"zy1byu5gel",
+      summary:"Billing a customer on a different frequency than the job itself — e.g. monthly service billed quarterly.",
+      q:"On the invoice date of a recurring invoice, what happens?",
+      options:["Nothing until you manually click send","The invoice is automatically generated and emailed to the customer","The job is automatically cancelled","The technician is automatically rerouted"], correct:1 },
+  ]},
+  { module:"3. Add-Ons Training", desc:"The add-on features baked into the GorillaDesk account.", lessons:[
+    { title:"Lesson 1 – Stripe and Square", wistia:"sqaou4my49",
+      summary:"Storing cards on file, accepting field payments, and the difference between Stripe and Square.",
+      q:"Which processor supports recurring subscription billing?",
+      options:["Square", "Stripe", "Neither", "Both equally"], correct:1 },
+    { title:"Lesson 2 – Commission Tracking", wistia:"zrsyriwa4v",
+      summary:"Assigning commission values to line items for automated reporting — Pro Plan, Superadmin only.",
+      q:"The commission tracking report shows data based on:",
+      options:["Estimated future sales","Paid invoice line items","GPS mileage","SMS message counts"], correct:1 },
+    { title:"Lesson 3 – Customer Portal", wistia:"4sglgjerly",
+      summary:"Setting a permanent portal URL, optional website widget install, and toggling customer permissions.",
+      q:"Do you need a website to use the Customer Portal?",
+      options:["Yes, it's required", "No — you can share portal access via a button in outgoing emails instead", "Only for Pro Plan users", "Only for commercial accounts"], correct:1 },
+    { title:"Lesson 4 – Device Tracking", wistia:"gzbsa93adx",
+      summary:"Tracking bait boxes, traps, and other field devices via barcode scans in the mobile app.",
+      q:"Device Tracking is especially useful for:",
+      options:["Tracking company vehicles", "Bait boxes, traps, or other equipment left in the field", "Employee time clocks", "Customer credit cards"], correct:1 },
+    { title:"Lesson 5 – Documents", wistia:"cfb7bmyjfe",
+      summary:"State/government forms are included for Pro users; fully custom forms cost a one-time $99 build fee.",
+      q:"How much does a custom, business-specific document integration cost?",
+      options:["Free", "A one-time $99 fee", "$5/month", "It's not offered"], correct:1 },
+    { title:"Lesson 6 – GPS Tracking", wistia:"uuuf88jyh0",
+      summary:"Real-time location on the scheduling map, plus Pro features: Replay, Vicinity, and Overwatch.",
+      q:"Do you need to buy special hardware for GPS Tracking?",
+      options:["Yes, a dedicated GPS unit", "No — it tracks the mobile app's location on each user's device", "Only for the Basic Plan", "Only for commercial accounts"], correct:1 },
+    { title:"Lesson 7 – Material Usage", wistia:"sfzs073h37",
+      summary:"Maintaining a master material list (materials, units, target pests, locations, treatment methods, area) used in the field.",
+      q:"Where can you find and update your master material list?",
+      options:["Settings > Addons > Material Usage", "The Customer Portal", "The SMS Inbox", "The Routing Optimizer"], correct:0 },
+    { title:"Lesson 8 – QuickBooks Sync", wistia:"ztt8gsy5dc",
+      summary:"A one-way push of customers, invoices, and payments to QuickBooks Online.",
+      q:"Does QuickBooks Sync work with the QuickBooks Desktop app?",
+      options:["Yes, fully supported", "No — only QuickBooks Online is supported", "Only with an add-on fee", "Only for Pro Plan"], correct:1 },
+    { title:"Lesson 9 – Review Engine", wistia:"kzqvwxxf9n",
+      summary:"Collect 5-star reviews by embedding a rating shortcode in outgoing emails (Pro Plan).",
+      q:"How can you be notified when a customer leaves a review?",
+      options:["It's not possible to be notified", "Enable review notifications in your user account permissions", "Only by checking manually every day", "Only via SMS"], correct:1 },
+    { title:"Lesson 10 – Routing Optimizer", wistia:"t7phmeurxa",
+      summary:"Automatically rearranges jobs within a date range into the most efficient order.",
+      q:"On the Basic Plan, how many stops can be optimized at once?",
+      options:["Up to 12", "Up to 24", "Unlimited", "Up to 50"], correct:1 },
+    { title:"Lesson 11 – SMS", wistia:"ky0rtabsx8",
+      summary:"Two-way texting with customers — a monthly fee, SMS packs, and how incoming calls/messages are handled.",
+      q:"Do incoming SMS replies from customers cost you credits?",
+      options:["Yes, 1 credit each", "No — incoming messages are free", "Only after business hours", "Only for commercial customers"], correct:1 },
+    { title:"Lesson 12 – Triggers", wistia:"lw0xo06lhu",
+      summary:"Automating recurring tasks like auto-emailing invoices/receipts and carrying materials forward.",
+      q:"Do Triggers apply per-customer or globally?",
+      options:["Per customer only", "They're a global setting that applies to all customers", "Per technician only", "They must be set per job"], correct:1 },
+    { title:"Lesson 13 – Email Inbox", wistia:"crs2wa0tr0",
+      summary:"Sync your company inbox into GorillaDesk so emails live on the customer's profile.",
+      q:"What's required to use the Email Inbox feature?",
+      options:["Any email provider works", "A G Suite-enabled Gmail account, whitelisted in your G Suite admin panel", "A Pro Plan subscription only", "The Customer Portal must be enabled first"], correct:1 },
+    { title:"Lesson 14 – Online Booking", wistia:"yqm6480ghb",
+      summary:"Let leads/customers book directly from your site or portal; bookings land as 'Pending' jobs.",
+      q:"Is the Customer Portal required to use Online Booking?",
+      options:["Yes, always", "No — you can use a 'Book Online' email button or embed the widget instead", "Only on weekends", "Only for Pro Plan"], correct:1 },
+    { title:"Lesson 15 – Multi-Dwelling Unit", wistia:"ckkbr9zqqr",
+      summary:"Streamlines managing apartment complexes and commercial properties with multiple units.",
+      q:"The Multi-Dwelling Unit feature is designed for:",
+      options:["Single-family homes only", "Apartment complexes or commercial properties with multiple units", "Vehicle fleet management", "Payroll processing"], correct:1 },
+  ]},
+  { module:"4. Technician Training", desc:"Built specifically to help technicians operate GorillaDesk out in the field.", lessons:[
+    { title:"Lesson 1 – Mobile App Walkthrough", wistia:"axeobmbxpi",
+      summary:"The full field workflow: adding a customer, creating a job, adding materials, invoicing, taking payment, and completing the job — all from the mobile app.",
+      q:"If you add a payment to an invoice from the mobile app in the field, when can the office see it?",
+      options:["The next business day", "Immediately — GorillaDesk is cloud-based and updates in real time", "Only after you sync manually", "Never, it stays on your device"], correct:1 },
+  ]},
+];
+
+const root = document.getElementById('modulesRoot');
+let total = 0;
+const state = {};
+const flatLessons = [];
+
+DATA.forEach((mod, mi) => {
+  const modDiv = document.createElement('div');
+  modDiv.className = 'module';
+  modDiv.innerHTML = `<div class="module-head"><span class="num">MODULE ${mi+1}</span><h2>${mod.module.replace(/^\d+\.\s*/,'')}</h2></div><p class="module-desc">${mod.desc}</p>`;
+
+  mod.lessons.forEach((lesson, li) => {
+    total++;
+    const qid = `q_${mi}_${li}`;
+    const card = document.createElement('div');
+    card.className = 'lesson-card locked';
+    const optsHtml = lesson.options.map((opt, oi) => `
+      <label class="opt" data-oi="${oi}">
+        <input type="radio" name="${qid}" value="${oi}">
+        <span>${opt}</span>
+      </label>`).join('');
+    card.innerHTML = `
+      <div class="lesson-head">
+        <div class="lesson-num">${mod.module}</div>
+        <div class="lesson-title">${lesson.title}</div>
+        <p class="lesson-summary">${lesson.summary}</p>
+      </div>
+      <div class="lesson-body">
+        <div class="lock-overlay">
+          <div class="lock-icon">\u{1F512}</div>
+          <p>Finish the video above first \u2014 this lesson unlocks automatically once it ends.</p>
+        </div>
+        <div class="video-wrap">
+          <div class="video-frame">
+            <div class="video-fallback">Loading video\u2026 if it doesn't appear, <a href="https://fast.wistia.com/embed/medias/${lesson.wistia}" target="_blank" rel="noopener">watch it directly on Wistia</a>.</div>
+            <iframe data-src="https://fast.wistia.net/embed/iframe/${lesson.wistia}?videoFoam=true" title="${lesson.title}" allow="autoplay; fullscreen" allowfullscreen loading="lazy"></iframe>
+          </div>
+        </div>
+        <div class="quiz-block">
+          <p class="quiz-q">${lesson.q}</p>
+          ${optsHtml}
+          <div class="feedback" id="fb_${qid}"></div>
+        </div>
+      </div>
+    `;
+    modDiv.appendChild(card);
+
+    card.querySelectorAll(`input[name="${qid}"]`).forEach(input => {
+      input.disabled = true;
+      input.addEventListener('change', () => {
+        state[qid] = { chosen: parseInt(input.value), correct: lesson.correct };
+        card.querySelectorAll('.opt').forEach(o => {
+          const oi = parseInt(o.dataset.oi);
+          o.classList.remove('correct','incorrect');
+          if (oi === lesson.correct) o.classList.add('correct');
+          else if (oi === parseInt(input.value)) o.classList.add('incorrect');
+        });
+        const fb = document.getElementById(`fb_${qid}`);
+        if (parseInt(input.value) === lesson.correct) {
+          fb.textContent = 'Correct.'; fb.className = 'feedback ok';
+        } else {
+          fb.textContent = `Correct answer: ${lesson.options[lesson.correct]}`; fb.className = 'feedback no';
+        }
+        updateProgress();
+      });
+    });
+
+    flatLessons.push({ qid, wistia: lesson.wistia, cardEl: card, iframeEl: card.querySelector('iframe') });
+  });
+
+  root.appendChild(modDiv);
+});
+
+document.getElementById('progressLabel').textContent = `0 of ${total} answered`;
+
+const PROGRESS_KEY = 'wh_gorilladesk_quiz_progress';
+
+function saveProgress(submitted, score, pct) {
+  const watchedIdx = flatLessons
+    .map((l, i) => l.cardEl.classList.contains('watched') ? i : -1)
+    .filter(i => i >= 0);
+  const payload = {
+    watchedIdx,
+    answers: state,
+    answeredCount: Object.keys(state).length,
+    total,
+    submitted: !!submitted,
+    score: typeof score === 'number' ? score : null,
+    pct: typeof pct === 'number' ? pct : null,
+    name: document.getElementById('techName').value.trim(),
+    email: document.getElementById('techEmail').value.trim(),
+    updatedAt: Date.now()
+  };
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(payload)); } catch (e) {}
+}
+
+function loadProgress() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(PROGRESS_KEY) || 'null'); } catch (e) {}
+  if (!saved) return;
+
+  if (saved.name) document.getElementById('techName').value = saved.name;
+  if (saved.email) document.getElementById('techEmail').value = saved.email;
+
+  let maxWatched = -1;
+  (saved.watchedIdx || []).forEach(i => { if (i > maxWatched) maxWatched = i; });
+  for (let i = 0; i <= maxWatched + 1 && i < flatLessons.length; i++) unlockLesson(i);
+  (saved.watchedIdx || []).forEach(i => { if (flatLessons[i]) flatLessons[i].cardEl.classList.add('watched'); });
+
+  Object.keys(saved.answers || {}).forEach(qid => {
+    const chosen = saved.answers[qid].chosen;
+    const input = document.querySelector(`input[name="${qid}"][value="${chosen}"]`);
+    if (input) {
+      input.checked = true;
+      input.disabled = false;
+      input.dispatchEvent(new Event('change'));
+    }
+  });
+
+  if (saved.submitted) {
+    document.getElementById('resultPanel').style.display = 'block';
+    document.getElementById('scoreBig').textContent = `${saved.score} / ${total}`;
+    document.getElementById('scoreSub').textContent =
+      `${saved.pct}% correct${saved.name ? ' — ' + saved.name : ''}${saved.email ? ' (' + saved.email + ')' : ''}. Contact your supervisor with any questions.`;
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = 'Submitted';
+  }
+}
+
+function bindWistiaEnd(hashedId, onEnd) {
+  window._wq = window._wq || [];
+  window._wq.push({ id: hashedId, onReady: function (video) {
+    video.bind('end', function () { onEnd(); });
+  }});
+}
+
+function unlockLesson(idx) {
+  if (idx < 0 || idx >= flatLessons.length) return;
+  const item = flatLessons[idx];
+  item.cardEl.classList.remove('locked');
+  item.cardEl.querySelectorAll('input[type="radio"]').forEach(r => { r.disabled = false; });
+  if (item.iframeEl && !item.iframeEl.src) {
+    item.iframeEl.src = item.iframeEl.getAttribute('data-src');
+  }
+  if (!item.bound) {
+    item.bound = true;
+    bindWistiaEnd(item.wistia, function () {
+      item.cardEl.classList.add('watched');
+      unlockLesson(idx + 1);
+      saveProgress(false);
+    });
+  }
+}
+
+unlockLesson(0);
+loadProgress();
+
+function updateProgress(){
+  const answered = Object.keys(state).length;
+  document.getElementById('progressFill').style.width = `${(answered/total)*100}%`;
+  document.getElementById('progressLabel').textContent = `${answered} of ${total} answered`;
+  const btn = document.getElementById('submitBtn');
+  const note = document.getElementById('submitNote');
+  if (answered === total) {
+    btn.disabled = false;
+    note.textContent = 'All questions answered — ready to submit.';
+  } else {
+    btn.disabled = true;
+    note.textContent = `Answer all ${total} questions to submit.`;
+  }
+  saveProgress(false);
+}
+
+document.getElementById('submitBtn').addEventListener('click', () => {
+  const name = document.getElementById('techName').value.trim();
+  const email = document.getElementById('techEmail').value.trim();
+  let score = 0;
+  Object.values(state).forEach(s => { if (s.chosen === s.correct) score++; });
+  const pct = Math.round((score/total)*100);
+  document.getElementById('resultPanel').style.display = 'block';
+  document.getElementById('scoreBig').textContent = `${score} / ${total}`;
+  document.getElementById('scoreSub').textContent =
+    `${pct}% correct${name ? ' — ' + name : ''}${email ? ' (' + email + ')' : ''}. Contact your supervisor with any questions.`;
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = 'Submitted';
+  saveProgress(true, score, pct);
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+});
+</script>
+</body>
+</html>
