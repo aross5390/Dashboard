@@ -120,32 +120,33 @@
     color: #fff;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     padding: 48px 44px;
     position: relative;
     overflow: hidden;
   }
   .auth-visual .brand {
+    position: absolute;
+    top: 44px;
+    left: 44px;
     display: flex;
     align-items: center;
     gap: 10px;
     z-index: 2;
-  }
-  .auth-visual .brand {
     background: rgba(255,255,255,0.96);
-    padding: 10px 16px;
-    border-radius: 9px;
+    padding: 14px 22px;
+    border-radius: 10px;
     box-shadow: var(--shadow-card);
     width: fit-content;
   }
   .auth-visual .brand img {
-    height: 34px;
+    height: 56px;
     display: block;
   }
 
   .auth-visual .tagline {
     z-index: 2;
-    max-width: 400px;
+    max-width: 420px;
   }
   .auth-visual .tagline .eyebrow {
     font-family: var(--font-mono);
@@ -157,43 +158,15 @@
     display: block;
   }
   .auth-visual .tagline h1 {
-    font-size: clamp(28px, 4vw, 40px);
+    font-size: clamp(30px, 4.2vw, 44px);
     line-height: 1.18;
     color: #fff;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
   }
   .auth-visual .tagline p {
-    font-size: 14.5px;
+    font-size: 15px;
     color: rgba(255,255,255,0.82);
-    line-height: 1.6;
-  }
-  .auth-visual .stat {
-    z-index: 2;
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.16);
-    border-radius: 10px;
-    padding: 14px 18px;
-    width: fit-content;
-    backdrop-filter: blur(2px);
-  }
-  .auth-visual .stat .num {
-    font-family: var(--font-display);
-    font-size: 32px;
-    font-weight: 800;
-    color: #fff;
-    line-height: 1;
-  }
-  .auth-visual .stat .num .plus { color: var(--green-logo); }
-  .auth-visual .stat .label {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    color: rgba(255,255,255,0.78);
-    line-height: 1.35;
-    max-width: 120px;
+    line-height: 1.65;
   }
 
   .route-overlay {
@@ -230,7 +203,6 @@
   .auth-visual .tagline .eyebrow { animation: fadeSlideUp 0.55s ease-out 0.1s both; }
   .auth-visual .tagline h1 { animation: fadeSlideUp 0.55s ease-out 0.18s both; }
   .auth-visual .tagline p { animation: fadeSlideUp 0.55s ease-out 0.26s both; }
-  .auth-visual .stat { animation: fadeSlideUp 0.55s ease-out 0.34s both; }
 
   /* ===================== AUTH PANEL ===================== */
   .auth-panel {
@@ -1225,16 +1197,31 @@ window.onerror = function(msg, url, line, col, error) {
   return false;
 };
 
-/* ===================== CONFIG ===================== */
-var CONFIG = {
-  API_URL: 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'
-};
-
 /* ===================== STATE ===================== */
 var STATE = {
   sessionToken: localStorage.getItem('wh_session') || null,
   user: null
 };
+
+/* ===================== BACKEND CONFIG =====================
+   Leave API_URL empty to keep running in demo mode (everything below,
+   including password changes, stays local to this browser only).
+
+   Once the Code.gs backend is deployed (see backend/README.md), paste the
+   deployed Web App /exec URL here. The moment this is non-empty, apiCall()
+   below switches from the local mock to real fetch() calls against your
+   actual Google Sheet — meaning logins, password changes, etc. become
+   genuinely shared across everyone on the team instead of per-browser.
+   No other code changes needed; this one line is the whole switch. */
+var CONFIG = {
+  API_URL: 'https://script.google.com/macros/s/AKfycbw7ZXh5Pjp5fU7gUJm7WkUnn_fki6pJbirX5AiVMEpemfHVYY3J-HiMACHDS31JfQQoww/exec'
+};
+if (CONFIG.API_URL) {
+  var demoBannerEl = document.getElementById('demoBanner');
+  if (demoBannerEl) demoBannerEl.remove();
+  var appEl = document.getElementById('app');
+  if (appEl) appEl.style.paddingTop = '0';
+}
 
 /* ===================== API HELPER (DEMO MODE) =====================
    This demo copy fakes the backend so you can click through without deploying
@@ -1288,6 +1275,24 @@ function getDemoCreds() {
 seedDemoCredentials();
 
 function apiCall(action, payload) {
+  payload = payload || {};
+  if (CONFIG.API_URL) {
+    return fetch(CONFIG.API_URL, {
+      method: 'POST',
+      // text/plain (not application/json) avoids a CORS preflight OPTIONS
+      // request, which Apps Script Web Apps can't respond to correctly.
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: action, payload: payload })
+    })
+      .then(function (res) { return res.json(); })
+      .catch(function (err) {
+        return { success: false, error: 'Could not reach the server. Check your connection and try again.' };
+      });
+  }
+  return apiCallDemoMock(action, payload);
+}
+
+function apiCallDemoMock(action, payload) {
   payload = payload || {};
   return new Promise(function (resolve) {
     setTimeout(function () {
@@ -1414,7 +1419,6 @@ function authVisualHTML(eyebrow, headline, sub) {
           '<h1>' + headline + '</h1>' +
           '<p>' + sub + '</p>' +
         '</div>' +
-        '<div class="stat"><div class="num" id="statNum">0</div><div class="label">Homes protected across South Florida</div></div>' +
       '</aside>' +
       '<main class="auth-panel">' +
         '<div class="auth-card-wrap">' +
