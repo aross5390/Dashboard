@@ -414,7 +414,24 @@
     font-weight: 700;
     font-size: 19px;
     box-shadow: 0 4px 10px rgba(22,51,80,0.18);
+    overflow: hidden;
   }
+  .sidebar-user .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .avatar-wrap { position: relative; width: 56px; height: 56px; }
+  .avatar-edit-btn {
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1.5px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow-card);
+    color: var(--slate);
+    font-size: 11px;
+  }
+  .avatar-edit-btn:hover { border-color: var(--blue); color: var(--blue); }
+  #avatarFileInput { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; }
   .sidebar-user .sname { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; color: var(--ink); }
   .role-pill {
     font-family: var(--font-mono);
@@ -525,7 +542,23 @@
     font-size: 13.5px;
     color: var(--ink);
     border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
+  .notif-mark-all {
+    background: none;
+    border: none;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.02em;
+    color: var(--blue);
+    text-transform: none;
+    padding: 2px 4px;
+  }
+  .notif-mark-all:hover { text-decoration: underline; }
+  .notif-mark-all:disabled { color: var(--slate-soft); cursor: default; text-decoration: none; }
   .notif-item {
     display: flex;
     gap: 10px;
@@ -1656,6 +1689,39 @@ function initials(u) {
   return (f + l).toUpperCase();
 }
 
+function profilePicKey(email) {
+  return 'wh_profile_pic_' + (email || '').toLowerCase();
+}
+function loadProfilePic(email) {
+  try { return localStorage.getItem(profilePicKey(email)); } catch (e) { return null; }
+}
+function saveProfilePic(email, dataUrl) {
+  try { localStorage.setItem(profilePicKey(email), dataUrl); } catch (e) {}
+}
+function removeProfilePic(email) {
+  try { localStorage.removeItem(profilePicKey(email)); } catch (e) {}
+}
+/* Downscales + compresses to a small JPEG before saving, so profile photos
+   don't bloat localStorage - full-resolution phone photos would eat the
+   quota fast otherwise. */
+function resizeImageFile(file, maxSize, callback) {
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    var img = new Image();
+    img.onload = function () {
+      var scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+      var canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      callback(canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
 function renderDashboard() {
   var u = STATE.user || { firstName: 'there', lastName: '', role: 'employee' };
   var roleLabel = u.role.charAt(0).toUpperCase() + u.role.slice(1);
@@ -1689,6 +1755,9 @@ function renderDashboard() {
     permissions:  { label: 'Staff Permissions', subtitle: 'Manage what each teammate can access.' }
   };
 
+  CURRENT_NAV_IDS = navIds;
+  CURRENT_TAB_META = TAB_META;
+
   var navHtml = structure.map(function (item) {
     if (item.label) {
       return '<div class="side-nav-group-label">' + item.label + '</div>';
@@ -1715,7 +1784,7 @@ function renderDashboard() {
             (unreadCount > 0 ? '<span class="notif-badge" id="notifBadge">' + unreadCount + '</span>' : '') +
           '</button>' +
           '<div class="notif-panel" id="notifPanel" style="display:none;">' +
-            '<div class="notif-panel-header">Notifications</div>' +
+            '<div class="notif-panel-header"><span>Notifications</span><button type="button" class="notif-mark-all" id="notifMarkAll">Mark all read</button></div>' +
             '<div id="notifItems"></div>' +
           '</div>' +
         '</div>' +
@@ -1727,7 +1796,11 @@ function renderDashboard() {
     '<div class="dash-shell">' +
       '<aside class="dash-sidebar">' +
         '<div class="sidebar-user">' +
-          '<div class="avatar">' + initials(u) + '</div>' +
+          '<div class="avatar-wrap">' +
+            '<div class="avatar" id="sidebarAvatar">' + (loadProfilePic(u.email) ? '<img src="' + loadProfilePic(u.email) + '" alt="" />' : initials(u)) + '</div>' +
+            '<button type="button" class="avatar-edit-btn" id="avatarEditBtn" title="Change profile picture">\u270e</button>' +
+            '<input type="file" id="avatarFileInput" accept="image/*" />' +
+          '</div>' +
           '<div class="sname">' + u.firstName + ' ' + u.lastName + '</div>' +
           '<div class="role-pill role-' + u.role + '">' + roleLabel + '</div>' +
         '</div>' +
@@ -1781,6 +1854,27 @@ function renderDashboard() {
       panel.style.display = 'none';
     }
   });
+  document.getElementById('notifMarkAll').onclick = function (e) {
+    e.stopPropagation();
+    notifList.forEach(function (n) { n.read = true; });
+    renderNotifItems(notifList);
+    var badge = document.getElementById('notifBadge');
+    if (badge) badge.remove();
+  };
+
+  document.getElementById('avatarEditBtn').onclick = function () {
+    document.getElementById('avatarFileInput').click();
+  };
+  document.getElementById('avatarFileInput').onchange = function (e) {
+    var file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!file.type.match(/^image\//)) return;
+    resizeImageFile(file, 200, function (dataUrl) {
+      saveProfilePic(u.email, dataUrl);
+      document.getElementById('sidebarAvatar').innerHTML = '<img src="' + dataUrl + '" alt="" />';
+    });
+  };
 
   switchTab(navIds[0], navIds, TAB_META);
 }
@@ -1833,32 +1927,34 @@ function navIcon(name) {
 
 var NOTIFS_BY_ROLE = {
   admin: [
-    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false },
-    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false },
-    { text: '3 new leave requests pending review', time: '1d ago', read: true }
+    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false, route: 'sops' },
+    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false, route: 'sales' },
+    { text: '3 new leave requests pending review', time: '1d ago', read: true, route: null }
   ],
   technician: [
-    { text: 'You moved up to <b>#2</b> this month in the team rankings', time: '5h ago', read: false },
-    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false },
-    { text: 'Your leave request for Aug 22 was approved', time: '2d ago', read: true }
+    { text: 'You moved up to <b>#2</b> this month in the team rankings', time: '5h ago', read: false, route: 'myrank' },
+    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false, route: 'sops' },
+    { text: 'Your leave request for Aug 22 was approved', time: '2d ago', read: true, route: null }
   ],
   marketing: [
-    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false },
-    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: true },
-    { text: 'Monthly performance summary is ready to export', time: '1d ago', read: true }
+    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false, route: 'sales' },
+    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: true, route: 'sops' },
+    { text: 'Monthly performance summary is ready to export', time: '1d ago', read: true, route: 'reports' }
   ],
   superadmin: [
-    { text: '3 new leave requests pending review', time: '1d ago', read: true },
-    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false },
-    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false }
+    { text: '3 new leave requests pending review', time: '1d ago', read: true, route: null },
+    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false, route: 'sales' },
+    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false, route: 'sops' }
   ]
 };
 
 var CURRENT_NOTIF_LIST = null;
+var CURRENT_NAV_IDS = null;
+var CURRENT_TAB_META = null;
 
-function addLiveNotification(text) {
+function addLiveNotification(text, route) {
   if (!CURRENT_NOTIF_LIST) return;
-  CURRENT_NOTIF_LIST.unshift({ text: text, time: 'Just now', read: false });
+  CURRENT_NOTIF_LIST.unshift({ text: text, time: 'Just now', read: false, route: route || null });
   var wrap = document.getElementById('notifItems');
   if (wrap) renderNotifItems(CURRENT_NOTIF_LIST);
   var unread = CURRENT_NOTIF_LIST.filter(function (n) { return !n.read; }).length;
@@ -1877,6 +1973,7 @@ function renderNotifItems(list) {
   var wrap = document.getElementById('notifItems');
   if (!list.length) {
     wrap.innerHTML = '<div class="notif-empty">You\'re all caught up.</div>';
+    updateMarkAllState(list);
     return;
   }
   wrap.innerHTML = list.map(function (n, i) {
@@ -1888,7 +1985,8 @@ function renderNotifItems(list) {
   wrap.querySelectorAll('.notif-item').forEach(function (el) {
     el.onclick = function () {
       var i = parseInt(el.getAttribute('data-i'), 10);
-      list[i].read = true;
+      var n = list[i];
+      n.read = true;
       el.classList.add('read');
       var unread = list.filter(function (n) { return !n.read; }).length;
       var badge = document.getElementById('notifBadge');
@@ -1896,8 +1994,23 @@ function renderNotifItems(list) {
         if (unread > 0) badge.textContent = unread;
         else badge.remove();
       }
+      updateMarkAllState(list);
+
+      if (n.route && CURRENT_NAV_IDS && CURRENT_NAV_IDS.indexOf(n.route) !== -1 && !CURRENT_TAB_META[n.route].disabled) {
+        var panelEl = document.getElementById('notifPanel');
+        if (panelEl) panelEl.style.display = 'none';
+        switchTab(n.route, CURRENT_NAV_IDS, CURRENT_TAB_META);
+      }
     };
   });
+  updateMarkAllState(list);
+}
+
+function updateMarkAllState(list) {
+  var btn = document.getElementById('notifMarkAll');
+  if (!btn) return;
+  var hasUnread = list.some(function (n) { return !n.read; });
+  btn.disabled = !hasUnread;
 }
 
 var ANNOUNCEMENTS = [
@@ -2064,7 +2177,7 @@ function renderPostAnnouncePanel(panel) {
     pendingFiles = [];
     drawPendingFiles();
     drawAnnounceList('announceList2', true);
-    addLiveNotification('New announcement: <b>' + title + '</b>');
+    addLiveNotification('New announcement: <b>' + title + '</b>', 'announcements');
     var successBox = document.getElementById('announceSuccess');
     document.getElementById('announceSuccessText').textContent = 'Published to all staff' +
       (uploaded.length ? ' with ' + uploaded.length + ' attachment(s)' : '') + '.';
@@ -2423,7 +2536,7 @@ function renderAddSopPanel(panel) {
     pendingFiles = [];
     drawPendingFiles();
     drawManageList();
-    addLiveNotification('New SOP added: <b>' + title + '</b>');
+    addLiveNotification('New SOP added: <b>' + title + '</b>', 'sops');
 
     var successBox = document.getElementById('addSopSuccess');
     document.getElementById('addSopSuccessText').textContent = existing ?
@@ -2861,7 +2974,7 @@ function renderAddTrainingPanel(panel) {
     pendingFiles = [];
     drawPendingFiles();
     drawManageList();
-    addLiveNotification('New training module added: <b>' + title + '</b>');
+    addLiveNotification('New training module added: <b>' + title + '</b>', 'training');
 
     var successBox = document.getElementById('addTrainingSuccess');
     document.getElementById('addTrainingSuccessText').textContent = 'Published "' + title + '" to Training.';
