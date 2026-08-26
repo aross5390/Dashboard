@@ -1034,6 +1034,19 @@
     border-radius: 10px;
   }
   .announce-item-title { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; color: var(--ink); margin-bottom: 4px; }
+  .announce-item-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .announce-item-head .announce-item-title { margin-bottom: 4px; flex: 1; }
+  .announce-delete {
+    background: none;
+    border: none;
+    color: var(--slate-soft);
+    font-size: 13px;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 5px;
+    flex-shrink: 0;
+  }
+  .announce-delete:hover { color: #C53A3A; background: rgba(197,58,58,0.08); }
   .announce-item-body { font-size: 13px; color: var(--slate); line-height: 1.5; margin-bottom: 8px; }
   .announce-item-meta { font-family: var(--font-mono); font-size: 10.5px; color: var(--slate-soft); }
 
@@ -1893,15 +1906,27 @@ var ANNOUNCEMENTS = [
   { title: 'New rodent trap vendor', body: 'We\u2019ve switched suppliers for bait stations. Old stock still fine to use until it runs out.', author: 'Dennis', time: '4d ago' }
 ];
 
-function drawAnnounceList(elId) {
-  document.getElementById(elId).innerHTML = ANNOUNCEMENTS.map(function (a) {
+function drawAnnounceList(elId, allowDelete) {
+  document.getElementById(elId).innerHTML = ANNOUNCEMENTS.map(function (a, i) {
     return '<div class="announce-item">' +
-      '<div class="announce-item-title">' + a.title + '</div>' +
+      '<div class="announce-item-head">' +
+        '<div class="announce-item-title">' + a.title + '</div>' +
+        (allowDelete ? '<button type="button" class="announce-delete" data-i="' + i + '" title="Remove announcement">\u2715</button>' : '') +
+      '</div>' +
       '<div class="announce-item-body">' + a.body + '</div>' +
       (a.files && a.files.length ? sopFilesHtml(a) : '') +
       '<div class="announce-item-meta">Posted by ' + a.author + ' \u00b7 ' + a.time + '</div>' +
     '</div>';
   }).join('');
+
+  if (allowDelete) {
+    document.querySelectorAll('#' + elId + ' .announce-delete').forEach(function (btn) {
+      btn.onclick = function () {
+        ANNOUNCEMENTS.splice(parseInt(btn.getAttribute('data-i'), 10), 1);
+        drawAnnounceList(elId, allowDelete);
+      };
+    });
+  }
 }
 
 function renderAnnouncementsPanel(panel) {
@@ -1945,7 +1970,7 @@ function renderPostAnnouncePanel(panel) {
       '<div class="announce-list" id="announceList2"></div>' +
     '</div>';
 
-  drawAnnounceList('announceList2');
+  drawAnnounceList('announceList2', true);
 
   var editor = document.getElementById('announceBody');
   var emojiPopover = document.getElementById('emojiPopover');
@@ -2038,7 +2063,7 @@ function renderPostAnnouncePanel(panel) {
     editor.innerHTML = '';
     pendingFiles = [];
     drawPendingFiles();
-    drawAnnounceList('announceList2');
+    drawAnnounceList('announceList2', true);
     addLiveNotification('New announcement: <b>' + title + '</b>');
     var successBox = document.getElementById('announceSuccess');
     document.getElementById('announceSuccessText').textContent = 'Published to all staff' +
@@ -2171,8 +2196,12 @@ function hashStr(s) {
   return Math.abs(h);
 }
 
+/* Live phase: nobody has actually taken a training module yet, so this
+   always reports 0 steps done for everyone. Once technicians start
+   completing modules for real, this is the spot to swap in real
+   per-technician progress from the backend. */
 function sampleStepsDone(techName, moduleTitle, totalSteps) {
-  return hashStr(techName + '::' + moduleTitle) % (totalSteps + 1);
+  return 0;
 }
 
 function renderTeamTrainingProgress() {
@@ -2223,7 +2252,7 @@ function renderTeamTrainingProgress() {
     summaryHtml +
     '<div class="report-recent-title" style="margin-top:20px;">Per-Module Breakdown</div>' +
     tableHtml +
-    '<div class="toast-note">Sample data \u2014 phase 2 pulls real per-technician completion, aggregated from everyone\u2019s actual logins, as modules are worked through.</div>' +
+    '<div class="toast-note">Nobody has completed a module yet \u2014 this updates automatically as your team works through the material.</div>' +
   '</div>';
 }
 
@@ -2237,20 +2266,9 @@ function renderTrainingPanel(panel) {
   renderTrainingCards();
 }
 
-var SOP_SECTIONS = [
-  { title: 'Company Overview & Culture', count: 4, updated: '3mo ago' },
-  { title: 'Safety & PPE', count: 6, updated: '2wk ago' },
-  { title: 'Chemical Handling & Storage', count: 8, updated: '2wk ago' },
-  { title: 'General Pest Treatments', count: 9, updated: '1mo ago' },
-  { title: 'Termite Protocols (WDO)', count: 7, updated: '5d ago' },
-  { title: 'Rodent & Trapping', count: 5, updated: '1mo ago' },
-  { title: 'Mosquito Programs', count: 4, updated: '2mo ago' },
-  { title: 'Customer Service Standards', count: 6, updated: '3wk ago' },
-  { title: 'Route & Scheduling', count: 5, updated: '1mo ago' },
-  { title: 'Vehicle & Equipment Care', count: 4, updated: '2mo ago' },
-  { title: 'Documentation & GorillaDesk', count: 6, updated: '3wk ago' },
-  { title: 'Emergency Procedures', count: 3, updated: '4mo ago' }
-];
+/* Live phase: no real SOPs have been uploaded yet. Add them from the
+   Add SOP page (Super Admin) - this seed list intentionally starts empty. */
+var SOP_SECTIONS = [];
 
 function formatFileSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
@@ -2276,15 +2294,16 @@ function sopFilesHtml(s) {
 function renderSOPsPanel(panel) {
   panel.innerHTML =
     '<input class="sop-search" id="sopSearch" type="text" placeholder="Search SOPs\u2026" />' +
-    '<div class="sop-list" id="sopList"></div>' +
-    '<div class="toast-note">Sample section list \u2014 phase 2 wires this to your real SOP library.</div>';
+    '<div class="sop-list" id="sopList"></div>';
 
   function draw(filter) {
     var f = (filter || '').toLowerCase();
     var rows = SOP_SECTIONS.filter(function (s) { return s.title.toLowerCase().indexOf(f) !== -1; });
     var list = document.getElementById('sopList');
     if (!rows.length) {
-      list.innerHTML = '<div class="sop-empty">No SOPs match "' + filter + '".</div>';
+      list.innerHTML = filter
+        ? '<div class="sop-empty">No SOPs match "' + filter + '".</div>'
+        : '<div class="sop-empty">No SOPs published yet. Super Admins can add sections from the Add SOP page.</div>';
       return;
     }
     list.innerHTML = rows.map(function (s) {
@@ -2415,16 +2434,11 @@ function renderAddSopPanel(panel) {
   };
 }
 
-var RANK_DATA = [
-  { name: 'Chris', jobs: 61, sales: 18420, salesCount: 34 },
-  { name: 'Luke', jobs: 58, sales: 16310, salesCount: 30 },
-  { name: 'You', jobs: 54, sales: 14960, salesCount: 27, me: true },
-  { name: 'Nylla', jobs: 52, sales: 13600, salesCount: 25 },
-  { name: 'Robert', jobs: 49, sales: 12120, salesCount: 22 },
-  { name: 'Steven', jobs: 47, sales: 10890, salesCount: 20 },
-  { name: 'Zach', jobs: 44, sales: 9510, salesCount: 18 },
-  { name: 'Michael', jobs: 6, sales: 1240, salesCount: 3 }
-];
+/* Live phase: no real sales numbers have been uploaded yet. This seed list
+   intentionally starts empty - Team Rankings and Sales Tracking show an
+   empty state until real data is wired in from the Employee Sales Tracking
+   sheet. */
+var RANK_DATA = [];
 RANK_DATA.sort(function (a, b) { return b.sales - a.sales; });
 
 function rankInitials(name) {
@@ -2434,6 +2448,13 @@ function rankInitials(name) {
 
 function renderRankPanel(panel, isMe) {
   var data = RANK_DATA;
+
+  if (!data.length) {
+    panel.innerHTML = '<div class="sop-empty">No sales data yet. Once your team\'s sales are uploaded, ' +
+      (isMe ? 'your rank' : 'the leaderboard') + ' will show up here.</div>';
+    return;
+  }
+
   var meRow = data.filter(function (r) { return r.me; })[0];
   var html = '';
 
@@ -2481,6 +2502,11 @@ function daysBetween(startStr, endStr) {
 }
 
 function renderSalesPanel(panel) {
+  if (!RANK_DATA.length) {
+    panel.innerHTML = '<div class="sop-empty">No sales data uploaded yet. Once your Employee Sales Tracking sheet is connected, technician filters and stats will show up here.</div>';
+    return;
+  }
+
   var activeTechs = new Set(RANK_DATA.map(function (r) { return r.name; }));
   var appliedScale = 1;
   var appliedRangeLabel = 'Aug 1 \u2013 Aug 16 (default)';
