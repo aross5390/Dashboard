@@ -1112,6 +1112,22 @@
   }
   .perm-save-success.show { display: inline-flex; align-items: center; gap: 6px; }
 
+  .team-progress-table-wrap { overflow-x: auto; }
+  .team-progress-table { min-width: 100%; }
+  .team-progress-table th, .team-progress-table td { white-space: nowrap; }
+  .module-status-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .module-status-badge.done { background: rgba(45,176,61,0.14); color: var(--green-dark); }
+  .module-status-badge.partial { background: rgba(17,126,192,0.12); color: var(--blue); }
+  .module-status-badge.not-started { background: var(--fog); color: var(--slate-soft); }
+
   .sales-stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
   .sales-stat-card {
     padding: 16px 18px;
@@ -2160,28 +2176,50 @@ function renderTeamTrainingProgress() {
   var rows = TRAINING_TECHS.map(function (name) {
     var completedModules = 0;
     var pctSum = 0;
-    TRAINING_MODULES.forEach(function (m) {
+    var perModule = TRAINING_MODULES.map(function (m) {
       var steps = m.steps || 4;
       var done = sampleStepsDone(name, m.title, steps);
       pctSum += done / steps;
-      if (done >= steps) completedModules++;
+      var status = done >= steps ? 'done' : (done === 0 ? 'not-started' : 'partial');
+      if (status === 'done') completedModules++;
+      return { title: m.title, status: status, done: done, steps: steps };
     });
     var avgPct = Math.round((pctSum / TRAINING_MODULES.length) * 100);
-    return { name: name, avgPct: avgPct, completedModules: completedModules, total: TRAINING_MODULES.length };
+    return { name: name, avgPct: avgPct, completedModules: completedModules, total: TRAINING_MODULES.length, perModule: perModule };
   });
+
+  var summaryHtml = '<div class="sales-bar-list">' +
+    rows.map(function (r) {
+      return '<div class="sales-bar-row">' +
+        '<div class="sales-bar-name">' + r.name + '</div>' +
+        '<div class="sales-bar-track"><div class="sales-bar-fill" style="width:' + r.avgPct + '%"></div></div>' +
+        '<div class="sales-bar-value">' + r.completedModules + '/' + r.total + ' done \u00b7 ' + r.avgPct + '%</div>' +
+      '</div>';
+    }).join('') +
+  '</div>';
+
+  var tableHtml = '<div class="team-progress-table-wrap"><table class="perm-table team-progress-table">' +
+    '<thead><tr><th>Technician</th>' +
+      TRAINING_MODULES.map(function (m) { return '<th>' + m.title + '</th>'; }).join('') +
+    '</tr></thead>' +
+    '<tbody>' +
+      rows.map(function (r) {
+        return '<tr><td class="perm-name">' + r.name + '</td>' +
+          r.perModule.map(function (pm) {
+            var label = pm.status === 'done' ? 'Completed' : (pm.status === 'partial' ? 'In progress \u00b7 ' + pm.done + '/' + pm.steps : 'Not started');
+            return '<td><span class="module-status-badge ' + pm.status + '">' + label + '</span></td>';
+          }).join('') +
+        '</tr>';
+      }).join('') +
+    '</tbody>' +
+  '</table></div>';
 
   return '<div class="report-recent" style="margin-top:28px;">' +
     '<div class="report-recent-title">Team Training Progress</div>' +
-    '<div class="sales-bar-list">' +
-      rows.map(function (r) {
-        return '<div class="sales-bar-row">' +
-          '<div class="sales-bar-name">' + r.name + '</div>' +
-          '<div class="sales-bar-track"><div class="sales-bar-fill" style="width:' + r.avgPct + '%"></div></div>' +
-          '<div class="sales-bar-value">' + r.completedModules + '/' + r.total + ' done \u00b7 ' + r.avgPct + '%</div>' +
-        '</div>';
-      }).join('') +
-    '</div>' +
-    '<div class="toast-note">Sample data \u2014 phase 2 pulls real per-technician completion as modules are worked through.</div>' +
+    summaryHtml +
+    '<div class="report-recent-title" style="margin-top:20px;">Per-Module Breakdown</div>' +
+    tableHtml +
+    '<div class="toast-note">Sample data \u2014 phase 2 pulls real per-technician completion, aggregated from everyone\u2019s actual logins, as modules are worked through.</div>' +
   '</div>';
 }
 
