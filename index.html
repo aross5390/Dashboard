@@ -1166,6 +1166,143 @@
   .sales-bar-value { width: 130px; text-align: right; flex-shrink: 0; font-family: var(--font-mono); font-size: 11.5px; color: var(--slate); }
   .sales-bar-value .count { color: var(--slate-soft); }
 
+  /* ---- leave requests ---- */
+  .leave-section-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .leave-section-divider { height: 1px; background: var(--line); margin: 28px 0; }
+  .leave-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-card);
+  }
+  .leave-filters .report-field { min-width: 160px; margin-bottom: 0; }
+  .leave-grid { display: flex; gap: 22px; flex-wrap: wrap; align-items: flex-start; }
+  .leave-request-form, .leave-my-requests, .leave-calendar-panel, .leave-list-panel {
+    flex: 1;
+    min-width: 320px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow-card);
+  }
+  .leave-credits-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px; }
+  .leave-credit-card {
+    flex: 1;
+    min-width: 160px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow-card);
+  }
+  .leave-credit-type { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--slate-soft); margin-bottom: 6px; }
+  .leave-credit-num { font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--ink); margin-bottom: 8px; }
+  .leave-credit-num span { font-family: var(--font-body); font-weight: 400; font-size: 12px; color: var(--slate); }
+  .leave-credit-bar { height: 8px; background: var(--fog); border-radius: 5px; overflow: hidden; }
+  .leave-credit-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--green)); border-radius: 5px; }
+  .leave-credit-pending { font-family: var(--font-mono); font-size: 10.5px; color: #B8860B; margin-top: 6px; }
+
+  .leave-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .leave-cal-title { font-family: var(--font-display); font-weight: 700; font-size: 14.5px; color: var(--ink); }
+  .leave-cal-arrow {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    border: 1.5px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .leave-cal-arrow:hover { border-color: var(--blue); color: var(--blue); }
+  .leave-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .leave-cal-dow { text-align: center; font-family: var(--font-mono); font-size: 10px; color: var(--slate-soft); padding-bottom: 4px; }
+  .leave-cal-cell {
+    aspect-ratio: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 8px;
+    font-size: 12.5px;
+    color: var(--ink);
+    background: var(--fog);
+    cursor: pointer;
+    position: relative;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .leave-cal-cell.empty { background: none; cursor: default; }
+  .leave-cal-cell.past { color: var(--slate-soft); cursor: default; opacity: 0.5; }
+  .leave-cal-cell:not(.empty):not(.past):hover { background: rgba(17,126,192,0.12); }
+  .leave-cal-cell.selected { background: var(--green) !important; color: #fff; font-weight: 700; }
+  .leave-cal-cell.selected:hover { background: var(--green-dark) !important; }
+  .leave-cal-cell.today:not(.selected) { box-shadow: inset 0 0 0 1.5px var(--blue); }
+  .leave-cal-cell.has-events { cursor: default; }
+  .leave-cal-dots { display: flex; gap: 2px; position: absolute; bottom: 3px; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
+  .dot.approved { background: var(--green); }
+  .dot.pending { background: #E0A526; }
+  .leave-legend { display: flex; align-items: center; gap: 4px; margin-top: 12px; font-size: 11.5px; color: var(--slate); }
+  .leave-legend .dot { margin-right: 2px; }
+
+  .leave-selected-dates { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .leave-no-dates { font-size: 12.5px; color: var(--slate-soft); font-style: italic; }
+  .leave-date-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--fog);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 5px 8px 5px 12px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .leave-date-chip button { background: none; border: none; color: var(--slate-soft); font-size: 11px; padding: 2px; border-radius: 50%; }
+  .leave-date-chip button:hover { color: #C53A3A; background: rgba(197,58,58,0.1); }
+
+  .leave-request-row {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .leave-request-row:last-child { border-bottom: none; }
+  .leave-request-type { font-family: var(--font-display); font-weight: 700; font-size: 13.5px; color: var(--ink); }
+  .leave-request-dates { font-family: var(--font-mono); font-size: 11.5px; color: var(--slate); margin-top: 3px; }
+  .leave-request-reason { font-size: 12.5px; color: var(--slate); margin-top: 5px; }
+  .leave-request-side { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+  .leave-status {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+  }
+  .leave-status-pending { background: rgba(224,165,38,0.16); color: #96741A; }
+  .leave-status-approved { background: rgba(45,176,61,0.14); color: var(--green-dark); }
+  .leave-status-denied { background: rgba(197,58,58,0.1); color: #C53A3A; }
+  .leave-action-btns { display: flex; gap: 6px; }
+  .leave-approve-btn, .leave-deny-btn, .leave-cancel-btn {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1.5px solid var(--line);
+    background: var(--paper);
+    color: var(--slate);
+  }
+  .leave-approve-btn:hover { border-color: var(--green); color: var(--green-dark); background: rgba(45,176,61,0.08); }
+  .leave-deny-btn:hover, .leave-cancel-btn:hover { border-color: #C53A3A; color: #C53A3A; background: rgba(197,58,58,0.06); }
+
   /* ---- report builder ---- */
   .report-builder {
     padding: 22px;
@@ -1748,7 +1885,7 @@ function renderDashboard() {
     rankings: { label: 'Team Rankings', subtitle: 'Performance across the whole team.' },
     sales:    { label: 'Sales Tracking', subtitle: 'Month-over-month performance at a glance.' },
     reports:  { label: 'Reports', subtitle: 'Build and export a report in a couple of clicks.' },
-    leave:    { label: 'Leave Requests', subtitle: 'Request and track time off.', disabled: true, soon: 'PHASE 3' },
+    leave:    { label: 'Leave Requests', subtitle: 'Request and track time off.' },
     postannounce: { label: 'Post Announcement', subtitle: 'Publish a company-wide update.' },
     addsop:       { label: 'Add SOP', subtitle: 'Publish a new SOP section for the team.' },
     addtraining:  { label: 'Add Training', subtitle: 'Publish a new training module.' },
@@ -1904,6 +2041,7 @@ function switchTab(tabId, navIds, TAB_META) {
   else if (tabId === 'addsop') renderAddSopPanel(panel);
   else if (tabId === 'addtraining') renderAddTrainingPanel(panel);
   else if (tabId === 'permissions') renderPermissionsPanel(panel);
+  else if (tabId === 'leave') renderLeavePanel(panel);
 }
 
 function navIcon(name) {
@@ -1925,27 +2063,14 @@ function navIcon(name) {
   return icons[name] || '';
 }
 
+/* Live phase: nobody has any real notifications yet - each role starts
+   with an empty inbox. addLiveNotification() populates these for real as
+   things actually happen (announcements posted, SOPs added, etc). */
 var NOTIFS_BY_ROLE = {
-  admin: [
-    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false, route: 'sops' },
-    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false, route: 'sales' },
-    { text: '3 new leave requests pending review', time: '1d ago', read: true, route: null }
-  ],
-  technician: [
-    { text: 'You moved up to <b>#2</b> this month in the team rankings', time: '5h ago', read: false, route: 'myrank' },
-    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false, route: 'sops' },
-    { text: 'Your leave request for Aug 22 was approved', time: '2d ago', read: true, route: null }
-  ],
-  marketing: [
-    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false, route: 'sales' },
-    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: true, route: 'sops' },
-    { text: 'Monthly performance summary is ready to export', time: '1d ago', read: true, route: 'reports' }
-  ],
-  superadmin: [
-    { text: '3 new leave requests pending review', time: '1d ago', read: true, route: null },
-    { text: 'Sales Tracking report ready for July', time: '3h ago', read: false, route: 'sales' },
-    { text: 'New SOP added: <b>Termite Treatment Protocol</b>', time: '2h ago', read: false, route: 'sops' }
-  ]
+  admin: [],
+  technician: [],
+  marketing: [],
+  superadmin: []
 };
 
 var CURRENT_NOTIF_LIST = null;
@@ -2013,13 +2138,15 @@ function updateMarkAllState(list) {
   btn.disabled = !hasUnread;
 }
 
-var ANNOUNCEMENTS = [
-  { title: 'Termite Treatment Protocol updated', body: 'The WDO section now includes the revised inspection checklist. Please review before your next termite job.', author: 'Dennis', time: '2h ago' },
-  { title: 'Q3 recognition lunch \u2014 Aug 29', body: 'Office closes at 1pm for the team lunch. Come hungry.', author: 'Adrian', time: '1d ago' },
-  { title: 'New rodent trap vendor', body: 'We\u2019ve switched suppliers for bait stations. Old stock still fine to use until it runs out.', author: 'Dennis', time: '4d ago' }
-];
+/* Live phase: no real announcements have been posted yet. */
+var ANNOUNCEMENTS = [];
 
 function drawAnnounceList(elId, allowDelete) {
+  if (!ANNOUNCEMENTS.length) {
+    document.getElementById(elId).innerHTML = '<div class="sop-empty">No announcements yet.' +
+      (allowDelete ? ' Post one above.' : '') + '</div>';
+    return;
+  }
   document.getElementById(elId).innerHTML = ANNOUNCEMENTS.map(function (a, i) {
     return '<div class="announce-item">' +
       '<div class="announce-item-head">' +
@@ -2785,6 +2912,430 @@ function renderReportsPanel(panel) {
     drawHistory();
     setTimeout(function () { successBox.classList.remove('show'); }, 3500);
   };
+}
+
+/* ===================== LEAVE REQUESTS ===================== */
+var LEAVE_TYPES = ['Vacation', 'Sick', 'Personal', 'Unpaid'];
+var LEAVE_CREDIT_TYPES = ['Vacation', 'Sick', 'Personal']; // Unpaid doesn't draw from a bank
+
+var LEAVE_CREDITS = {};
+DEMO_ACCOUNTS.forEach(function (a) {
+  LEAVE_CREDITS[a.email] = { Vacation: 10, Sick: 5, Personal: 3 };
+});
+
+/* Live phase: no real leave requests yet. */
+var LEAVE_REQUESTS = [];
+var leaveIdSeq = 1;
+
+var MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function isoDate(d) {
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+function isoToNiceDate(iso) {
+  var p = iso.split('-').map(Number);
+  return new Date(p[0], p[1] - 1, p[2]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+function groupDatesForDisplay(isoDates) {
+  var sorted = isoDates.slice().sort();
+  var groups = [];
+  var start = null, prev = null;
+  sorted.forEach(function (iso) {
+    var d = new Date(iso + 'T00:00:00');
+    if (start === null) { start = d; prev = d; }
+    else {
+      var diffDays = Math.round((d - prev) / 86400000);
+      if (diffDays === 1) { prev = d; }
+      else { groups.push([start, prev]); start = d; prev = d; }
+    }
+  });
+  if (start !== null) groups.push([start, prev]);
+  return groups.map(function (g) {
+    var a = g[0], b = g[1];
+    var fmtA = a.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    if (a.getTime() === b.getTime()) return fmtA + ', ' + a.getFullYear();
+    var fmtB = a.getMonth() === b.getMonth() ? String(b.getDate()) : b.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return fmtA + '\u2013' + fmtB + ', ' + b.getFullYear();
+  }).join('; ');
+}
+function getMonthGrid(year, month) {
+  var startWeekday = new Date(year, month, 1).getDay();
+  var daysInMonth = new Date(year, month + 1, 0).getDate();
+  var daysInPrevMonth = new Date(year, month, 0).getDate();
+  var cells = [];
+  for (var i = 0; i < startWeekday; i++) {
+    cells.push({ day: daysInPrevMonth - startWeekday + 1 + i, inMonth: false, iso: null });
+  }
+  for (var d = 1; d <= daysInMonth; d++) {
+    cells.push({ day: d, inMonth: true, iso: isoDate(new Date(year, month, d)) });
+  }
+  var nextDay = 1;
+  while (cells.length % 7 !== 0) {
+    cells.push({ day: nextDay++, inMonth: false, iso: null });
+  }
+  return cells;
+}
+function leaveCreditSummary(email, type) {
+  var total = (LEAVE_CREDITS[email] && LEAVE_CREDITS[email][type]) || 0;
+  var approved = 0, pending = 0;
+  LEAVE_REQUESTS.forEach(function (r) {
+    if (r.email !== email || r.type !== type) return;
+    if (r.status === 'approved') approved += r.dates.length;
+    else if (r.status === 'pending') pending += r.dates.length;
+  });
+  return { total: total, approved: approved, pending: pending, remaining: Math.max(0, total - approved - pending) };
+}
+function pushNotifToRole(role, text, route) {
+  var list = NOTIFS_BY_ROLE[role];
+  if (!list) return;
+  list.unshift({ text: text, time: 'Just now', read: false, route: route || null });
+  if (CURRENT_NOTIF_LIST === list) {
+    var wrap = document.getElementById('notifItems');
+    if (wrap) renderNotifItems(list);
+    var unread = list.filter(function (n) { return !n.read; }).length;
+    var bell = document.getElementById('notifBell');
+    var badge = document.getElementById('notifBadge');
+    if (!badge && bell && unread > 0) {
+      badge = document.createElement('span');
+      badge.className = 'notif-badge';
+      badge.id = 'notifBadge';
+      bell.appendChild(badge);
+    }
+    if (badge) badge.textContent = unread;
+  }
+}
+
+function renderLeavePanel(panel) {
+  if (STATE.user.role === 'superadmin') {
+    panel.innerHTML =
+      '<div class="leave-section-title">My Leave</div>' +
+      '<div id="leaveSelfWrap"></div>' +
+      '<div class="leave-section-divider"></div>' +
+      '<div class="leave-section-title">Team Leave Requests</div>' +
+      '<div id="leaveTeamWrap"></div>';
+    renderLeaveRequestView(document.getElementById('leaveSelfWrap'), 'self');
+    renderLeaveManagerView(document.getElementById('leaveTeamWrap'));
+  } else {
+    renderLeaveRequestView(panel, '');
+  }
+}
+
+function renderLeaveRequestView(panel, idp) {
+  idp = idp || '';
+  var id = function (s) { return idp + s; };
+  var u = STATE.user;
+  var email = u.email;
+  var today = new Date();
+  var calYear = today.getFullYear();
+  var calMonth = today.getMonth();
+  var selectedDates = [];
+
+  panel.innerHTML =
+    '<div class="leave-credits-row" id="' + id('leaveCreditsRow') + '"></div>' +
+    '<div class="leave-grid">' +
+      '<div class="leave-request-form">' +
+        '<div class="report-recent-title">Request Leave</div>' +
+        '<div class="report-field"><label>Type</label>' +
+          '<select id="' + id('leaveType') + '">' + LEAVE_TYPES.map(function (t) { return '<option value="' + t + '">' + t + '</option>'; }).join('') + '</select>' +
+        '</div>' +
+        '<div class="report-field">' +
+          '<label>Pick one or more dates</label>' +
+          '<div class="leave-cal-nav">' +
+            '<button type="button" class="leave-cal-arrow" id="' + id('calPrev') + '">\u2039</button>' +
+            '<div class="leave-cal-title" id="' + id('calTitle') + '"></div>' +
+            '<button type="button" class="leave-cal-arrow" id="' + id('calNext') + '">\u203a</button>' +
+          '</div>' +
+          '<div class="leave-cal-grid" id="' + id('calGrid') + '"></div>' +
+        '</div>' +
+        '<div class="leave-selected-dates" id="' + id('selectedDatesWrap') + '"></div>' +
+        '<div class="report-field"><label>Reason (optional)</label><textarea id="' + id('leaveReason') + '" rows="2" placeholder="Anything your Super Admin should know?"></textarea></div>' +
+        '<div id="' + id('leaveErrorMsg') + '"></div>' +
+        '<button class="btn-primary" id="' + id('submitLeaveBtn') + '" type="button">Submit Request</button>' +
+        '<div class="report-success" id="' + id('leaveSuccess') + '">\u2713 <span id="' + id('leaveSuccessText') + '"></span></div>' +
+      '</div>' +
+      '<div class="leave-my-requests">' +
+        '<div class="report-recent-title">My Requests</div>' +
+        '<div id="' + id('myLeaveList') + '"></div>' +
+      '</div>' +
+    '</div>';
+
+  function drawCredits() {
+    document.getElementById(id('leaveCreditsRow')).innerHTML = LEAVE_CREDIT_TYPES.map(function (type) {
+      var s = leaveCreditSummary(email, type);
+      var usedPct = s.total ? Math.round(((s.approved + s.pending) / s.total) * 100) : 0;
+      return '<div class="leave-credit-card">' +
+        '<div class="leave-credit-type">' + type + '</div>' +
+        '<div class="leave-credit-num">' + s.remaining + ' <span>of ' + s.total + ' days left</span></div>' +
+        '<div class="leave-credit-bar"><div class="leave-credit-fill" style="width:' + usedPct + '%"></div></div>' +
+        (s.pending ? '<div class="leave-credit-pending">' + s.pending + ' pending</div>' : '') +
+      '</div>';
+    }).join('');
+  }
+
+  function drawCalendar() {
+    document.getElementById(id('calTitle')).textContent = MONTH_NAMES[calMonth] + ' ' + calYear;
+    var cells = getMonthGrid(calYear, calMonth);
+    var todayIso = isoDate(new Date());
+    var dow = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    var html = dow.map(function (d) { return '<div class="leave-cal-dow">' + d + '</div>'; }).join('');
+    html += cells.map(function (c) {
+      if (!c.inMonth) return '<div class="leave-cal-cell empty"></div>';
+      var isPast = c.iso < todayIso;
+      var isSelected = selectedDates.indexOf(c.iso) !== -1;
+      var cls = 'leave-cal-cell' + (isSelected ? ' selected' : '') + (isPast ? ' past' : '') + (c.iso === todayIso ? ' today' : '');
+      return '<div class="' + cls + '" data-iso="' + c.iso + '">' + c.day + '</div>';
+    }).join('');
+    document.getElementById(id('calGrid')).innerHTML = html;
+
+    document.querySelectorAll('#' + id('calGrid') + ' .leave-cal-cell[data-iso]:not(.empty):not(.past)').forEach(function (cell) {
+      cell.onclick = function () {
+        var iso = cell.getAttribute('data-iso');
+        var idx = selectedDates.indexOf(iso);
+        if (idx === -1) selectedDates.push(iso); else selectedDates.splice(idx, 1);
+        selectedDates.sort();
+        drawCalendar();
+        drawSelectedChips();
+      };
+    });
+  }
+
+  function drawSelectedChips() {
+    var wrap = document.getElementById(id('selectedDatesWrap'));
+    if (!selectedDates.length) {
+      wrap.innerHTML = '<div class="leave-no-dates">No dates selected yet \u2014 click days on the calendar above.</div>';
+      return;
+    }
+    wrap.innerHTML = selectedDates.map(function (iso, i) {
+      return '<span class="leave-date-chip">' + isoToNiceDate(iso) + '<button type="button" data-i="' + i + '">\u2715</button></span>';
+    }).join('');
+    wrap.querySelectorAll('button').forEach(function (btn) {
+      btn.onclick = function () {
+        selectedDates.splice(parseInt(btn.getAttribute('data-i'), 10), 1);
+        drawCalendar();
+        drawSelectedChips();
+      };
+    });
+  }
+
+  function drawMyRequests() {
+    var mine = LEAVE_REQUESTS.filter(function (r) { return r.email === email; })
+      .sort(function (a, b) { return b.requestedAt - a.requestedAt; });
+    var list = document.getElementById(id('myLeaveList'));
+    if (!mine.length) {
+      list.innerHTML = '<div class="sop-empty">No leave requests yet.</div>';
+      return;
+    }
+    list.innerHTML = mine.map(function (r) {
+      return '<div class="leave-request-row">' +
+        '<div class="leave-request-main">' +
+          '<div class="leave-request-type">' + r.type + '</div>' +
+          '<div class="leave-request-dates">' + groupDatesForDisplay(r.dates) + ' (' + r.dates.length + ' day' + (r.dates.length > 1 ? 's' : '') + ')</div>' +
+          (r.reason ? '<div class="leave-request-reason">' + r.reason + '</div>' : '') +
+        '</div>' +
+        '<div class="leave-request-side">' +
+          '<span class="leave-status leave-status-' + r.status + '">' + r.status + '</span>' +
+          (r.status === 'pending' ? '<button type="button" class="leave-cancel-btn" data-id="' + r.id + '">Cancel</button>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+    list.querySelectorAll('.leave-cancel-btn').forEach(function (btn) {
+      btn.onclick = function () {
+        var reqId = parseInt(btn.getAttribute('data-id'), 10);
+        LEAVE_REQUESTS = LEAVE_REQUESTS.filter(function (r) { return r.id !== reqId; });
+        drawCredits();
+        drawMyRequests();
+        if (idp === 'self') {
+          var teamWrap = document.getElementById('leaveTeamWrap');
+          if (teamWrap) renderLeaveManagerView(teamWrap);
+        }
+      };
+    });
+  }
+
+  document.getElementById(id('calPrev')).onclick = function () {
+    calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+    drawCalendar();
+  };
+  document.getElementById(id('calNext')).onclick = function () {
+    calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+    drawCalendar();
+  };
+
+  document.getElementById(id('submitLeaveBtn')).onclick = function () {
+    var type = document.getElementById(id('leaveType')).value;
+    var reason = document.getElementById(id('leaveReason')).value.trim();
+    var errBox = document.getElementById(id('leaveErrorMsg'));
+    errBox.innerHTML = '';
+    if (!selectedDates.length) {
+      errBox.innerHTML = '<div class="form-msg error">Pick at least one date first.</div>';
+      return;
+    }
+    if (LEAVE_CREDIT_TYPES.indexOf(type) !== -1) {
+      var s = leaveCreditSummary(email, type);
+      if (selectedDates.length > s.remaining) {
+        errBox.innerHTML = '<div class="form-msg error">That\u2019s ' + selectedDates.length + ' day(s), but you only have ' + s.remaining + ' ' + type.toLowerCase() + ' day(s) left.</div>';
+        return;
+      }
+    }
+    LEAVE_REQUESTS.push({
+      id: leaveIdSeq++, email: email, name: u.firstName, role: u.role, type: type,
+      dates: selectedDates.slice(), reason: reason, status: 'pending',
+      requestedAt: Date.now(), reviewedBy: null
+    });
+    pushNotifToRole('superadmin', u.firstName + ' requested ' + selectedDates.length + ' day(s) of ' + type.toLowerCase() + ' leave.', 'leave');
+    selectedDates = [];
+    document.getElementById(id('leaveReason')).value = '';
+    drawCalendar();
+    drawSelectedChips();
+    drawCredits();
+    drawMyRequests();
+    var successBox = document.getElementById(id('leaveSuccess'));
+    document.getElementById(id('leaveSuccessText')).textContent = 'Request submitted \u2014 waiting on approval.';
+    successBox.classList.add('show');
+    setTimeout(function () { successBox.classList.remove('show'); }, 3000);
+    if (idp === 'self') {
+      var teamWrap = document.getElementById('leaveTeamWrap');
+      if (teamWrap) renderLeaveManagerView(teamWrap);
+    }
+  };
+
+  drawCredits();
+  drawCalendar();
+  drawSelectedChips();
+  drawMyRequests();
+}
+
+function renderLeaveManagerView(panel) {
+  var calToday = new Date();
+  var calYear = calToday.getFullYear();
+  var calMonth = calToday.getMonth();
+  var roleFilter = 'all';
+  var rangeMode = 'month';
+  var customStart = null, customEnd = null;
+
+  panel.innerHTML =
+    '<div class="leave-filters">' +
+      '<div class="report-field"><label>Role</label>' +
+        '<select id="leaveRoleFilter"><option value="all">All</option><option value="admin">Admin</option><option value="technician">Technician</option></select>' +
+      '</div>' +
+      '<div class="report-field"><label>Range</label>' +
+        '<select id="leaveRangeMode"><option value="month">Calendar\u2019s month</option><option value="custom">Custom range</option></select>' +
+      '</div>' +
+      '<div class="report-field" id="rangeStartWrap" style="display:none;"><label>From</label><input type="date" id="rangeStart" /></div>' +
+      '<div class="report-field" id="rangeEndWrap" style="display:none;"><label>To</label><input type="date" id="rangeEnd" /></div>' +
+    '</div>' +
+    '<div class="leave-grid">' +
+      '<div class="leave-calendar-panel">' +
+        '<div class="leave-cal-nav">' +
+          '<button type="button" class="leave-cal-arrow" id="calPrev">\u2039</button>' +
+          '<div class="leave-cal-title" id="calTitle"></div>' +
+          '<button type="button" class="leave-cal-arrow" id="calNext">\u203a</button>' +
+        '</div>' +
+        '<div class="leave-cal-grid" id="calGrid"></div>' +
+        '<div class="leave-legend"><span class="dot approved"></span> Approved &nbsp; <span class="dot pending"></span> Pending</div>' +
+      '</div>' +
+      '<div class="leave-list-panel">' +
+        '<div class="report-recent-title">Requests</div>' +
+        '<div id="leaveMgrList"></div>' +
+      '</div>' +
+    '</div>';
+
+  function getFilteredRequests() {
+    return LEAVE_REQUESTS.filter(function (r) {
+      if (roleFilter !== 'all' && r.role !== roleFilter) return false;
+      if (rangeMode === 'custom' && customStart && customEnd) {
+        return r.dates.some(function (iso) { return iso >= customStart && iso <= customEnd; });
+      }
+      var ym = calYear + '-' + String(calMonth + 1).padStart(2, '0');
+      return r.dates.some(function (iso) { return iso.indexOf(ym) === 0; });
+    });
+  }
+
+  function drawCalendar() {
+    document.getElementById('calTitle').textContent = MONTH_NAMES[calMonth] + ' ' + calYear;
+    var cells = getMonthGrid(calYear, calMonth);
+    var relevant = LEAVE_REQUESTS.filter(function (r) { return roleFilter === 'all' || r.role === roleFilter; });
+    var dow = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    var html = dow.map(function (d) { return '<div class="leave-cal-dow">' + d + '</div>'; }).join('');
+    html += cells.map(function (c) {
+      if (!c.inMonth) return '<div class="leave-cal-cell empty"></div>';
+      var dayReqs = relevant.filter(function (r) { return r.dates.indexOf(c.iso) !== -1; });
+      var hasApproved = dayReqs.some(function (r) { return r.status === 'approved'; });
+      var hasPending = dayReqs.some(function (r) { return r.status === 'pending'; });
+      var dots = (hasApproved ? '<span class="dot approved"></span>' : '') + (hasPending ? '<span class="dot pending"></span>' : '');
+      return '<div class="leave-cal-cell' + (dayReqs.length ? ' has-events' : '') + '" data-iso="' + c.iso + '">' + c.day + '<div class="leave-cal-dots">' + dots + '</div></div>';
+    }).join('');
+    document.getElementById('calGrid').innerHTML = html;
+  }
+
+  function drawList() {
+    var filtered = getFilteredRequests().sort(function (a, b) { return b.requestedAt - a.requestedAt; });
+    var list = document.getElementById('leaveMgrList');
+    if (!filtered.length) {
+      list.innerHTML = '<div class="sop-empty">No leave requests match these filters.</div>';
+      return;
+    }
+    list.innerHTML = filtered.map(function (r) {
+      return '<div class="leave-request-row">' +
+        '<div class="leave-request-main">' +
+          '<div class="leave-request-type">' + r.name + ' \u00b7 ' + r.type + '</div>' +
+          '<div class="leave-request-dates">' + groupDatesForDisplay(r.dates) + ' (' + r.dates.length + ' day' + (r.dates.length > 1 ? 's' : '') + ')</div>' +
+          (r.reason ? '<div class="leave-request-reason">' + r.reason + '</div>' : '') +
+        '</div>' +
+        '<div class="leave-request-side">' +
+          '<span class="leave-status leave-status-' + r.status + '">' + r.status + '</span>' +
+          (r.status === 'pending' ? '<div class="leave-action-btns"><button type="button" class="leave-approve-btn" data-id="' + r.id + '">Approve</button><button type="button" class="leave-deny-btn" data-id="' + r.id + '">Deny</button></div>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+    list.querySelectorAll('.leave-approve-btn').forEach(function (btn) {
+      btn.onclick = function () { reviewRequest(parseInt(btn.getAttribute('data-id'), 10), 'approved'); };
+    });
+    list.querySelectorAll('.leave-deny-btn').forEach(function (btn) {
+      btn.onclick = function () { reviewRequest(parseInt(btn.getAttribute('data-id'), 10), 'denied'); };
+    });
+  }
+
+  function reviewRequest(id, status) {
+    var req = LEAVE_REQUESTS.filter(function (r) { return r.id === id; })[0];
+    if (!req) return;
+    req.status = status;
+    req.reviewedBy = STATE.user.firstName;
+    req.reviewedAt = Date.now();
+    pushNotifToRole(req.role, 'Your ' + req.type.toLowerCase() + ' leave request (' + groupDatesForDisplay(req.dates) + ') was ' + status + '.', 'leave');
+    drawCalendar();
+    drawList();
+    var selfWrap = document.getElementById('leaveSelfWrap');
+    if (selfWrap) renderLeaveRequestView(selfWrap, 'self');
+  }
+
+  document.getElementById('leaveRoleFilter').onchange = function () {
+    roleFilter = this.value;
+    drawCalendar();
+    drawList();
+  };
+  document.getElementById('leaveRangeMode').onchange = function () {
+    rangeMode = this.value;
+    var show = rangeMode === 'custom';
+    document.getElementById('rangeStartWrap').style.display = show ? '' : 'none';
+    document.getElementById('rangeEndWrap').style.display = show ? '' : 'none';
+    drawList();
+  };
+  document.getElementById('rangeStart').onchange = function () { customStart = this.value; drawList(); };
+  document.getElementById('rangeEnd').onchange = function () { customEnd = this.value; drawList(); };
+  document.getElementById('calPrev').onclick = function () {
+    calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+    drawCalendar();
+    if (rangeMode === 'month') drawList();
+  };
+  document.getElementById('calNext').onclick = function () {
+    calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+    drawCalendar();
+    if (rangeMode === 'month') drawList();
+  };
+
+  drawCalendar();
+  drawList();
 }
 
 function readExternalQuizProgress(key) {
